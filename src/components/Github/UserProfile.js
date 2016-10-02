@@ -8,4 +8,9 @@ const UserProfile = ({bio, username}) => (
   </div>
 );
 
+UserProfile.propTypes = {
+  username: React.PropTypes.string.isRequired,
+  bio: React.PropTypes.object.isRequired
+}
+
 export default UserProfile;

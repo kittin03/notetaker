@@ -29,10 +29,18 @@ class Profile extends Component {
     this.bindAsArray(childRef, 'notes');
   }
   // removes listener, so the state won't update when the component is down
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.unbind('notes');
   }
-  render () {
+  handleAddNote(newNote) {
+    // update firebase with the new note
+    // whatever we pass into set() is going to replace data in this.state.notes.length
+    // appends newNote to the end of the Firebase
+    this.ref.child(this.props.params.username)
+      .child(this.state.notes.length)
+      .set(newNote)
+  }
+  render() {
     return (
       <div className="row">
         <div className="col-md-4">
@@ -46,8 +54,10 @@ class Profile extends Component {
             repos={this.state.repos} />
         </div>
         <div className="col-md-4">
-          <Notes username={this.props.params.username}
-            notes={this.state.notes} />
+          <Notes
+            username={this.props.params.username}
+            notes={this.state.notes}
+            addNote={this.handleAddNote} />
         </div>
       </div>
     )
