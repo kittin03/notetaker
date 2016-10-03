@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import { Router } from 'react-router';
 import Repos from './Github/Repos';
 import UserProfile from './Github/UserProfile';
 import Notes from './Notes/Notes';
-import ReactFireMixin from 'reactfire';
-import Firebase from 'firebase';
-import helpers from '../utils/helpers';
+import Rebase from 're-base';
+import getGithubInfo from '../utils/helpers';
+
+const base = Rebase.createClass('https://notetaker-2-59ab3.firebaseio.com/')
 
 class Profile extends Component {
   // TODO: refactor mixin
-  mixins: [ReactFireMixin]
   constructor(props) {
     super(props);
     this.state = {
@@ -19,15 +18,36 @@ class Profile extends Component {
     }
   }
   componentDidMount() {
-    this.ref = new Firebase('https://notetaker-2-59ab3.firebaseio.com/');
-    // need to get properties for particular user
-    // this.ref.child - take ref to user and go deeper
-    var childRef = this.ref.child(this.props.params.username);
-    // bind specific username endpoint in FB and pass property on a state
-    // that we want to bind to - notes
-    this.bindAsArray(childRef, 'notes');
+    // this.ref = new Firebase('https://notetaker-2-59ab3.firebaseio.com/');
+    this.init(this.props.params.username);
+  }
+  // gets invoked whenever Profile receives props
+  componentWillReceiveProps(nextProps) {
+    base.removeBinding(this.ref);
+    // this.unbind('notes');
+    // console.log('the next prop are', nextProps);
+    this.init(nextProps.params.username);
+  }
+  // removes listener, so the state won't update when the component is down
+  componentWillUnmount() {
+    // this.unbind('notes');
+    base.removeBinding(this.ref)
+  }
+  init(username) {
+    // // need to get properties for particular user
+    // // this.ref.child - take ref to user and go deeper
+    // var childRef = this.ref.child(username);
+    // // bind specific username endpoint in FB and pass property on a state
+    // // that we want to bind to - notes
+    // this.bindAsArray(childRef, 'notes');
 
-    helpers.getGithubInfo(this.props.params.username)
+    this.ref = base.bindToState(this.props.params.username, {
+      context: this,
+      asArray: true,
+      state: 'notes'
+    });
+
+    getGithubInfo(username)
       .then(function(data) {
         this.setState({
           bio: data.bio,
@@ -36,17 +56,16 @@ class Profile extends Component {
         // makes this same as this outside function
       }.bind(this))
   }
-  // removes listener, so the state won't update when the component is down
-  componentWillUnmount() {
-    this.unbind('notes');
-  }
   handleAddNote(newNote) {
-    // update firebase with the new note
-    // whatever we pass into set() is going to replace data in this.state.notes.length
-    // appends newNote to the end of the Firebase
-    this.ref.child(this.props.params.username)
-      .child(this.state.notes.length)
-      .set(newNote)
+    // // update firebase with the new note
+    // // whatever we pass into set() is going to replace data in this.state.notes.length
+    // // appends newNote to the end of the Firebase
+    // this.ref.child(this.props.params.username)
+    //   .child(this.state.notes.length)
+    //   .set(newNote)
+    base.post(this.props.params.username, {
+      data: this.state.notes.concat([newNote])
+    })
   }
   render() {
     return (
@@ -65,7 +84,7 @@ class Profile extends Component {
           <Notes
             username={this.props.params.username}
             notes={this.state.notes}
-            addNote={this.handleAddNote} />
+            addNote={(newNote) => this.handleAddNote(newNote)} />
         </div>
       </div>
     )

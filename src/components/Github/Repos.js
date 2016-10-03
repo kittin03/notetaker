@@ -1,8 +1,7 @@
 import React from 'react';
 
 const Repos = ({repos}) => {
-  console.log('REPOS', repos);
-  repos.map()
+  // console.log('REPOS', repos);
   return (
     <div>
       <h3>repos</h3>

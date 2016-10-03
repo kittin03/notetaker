@@ -1,18 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class Search extends Component {
-  // React is taking any property on React History module object that's adding it to 'this'
-  mixins: [Router.History]
-  getRef(ref) {
+class SearchGithub extends React.Component {
+  getRef(ref){
     this.usernameRef = ref;
   }
-  handleSubmit() {
-    // after clicking submit - go, grab username and take them to profile/whatever
-    const username = this.userNameRef.value;
+  handleSubmit(){
+    const username = this.usernameRef.value;
     this.usernameRef.value = '';
-    this.history.pushState(null, "profile/" + username)
+    this.props.history.pushState(null, "/profile/" + username)
   }
-  render() {
+  render(){
     return (
       <div className="col-sm-12">
         <form onSubmit={() => this.handleSubmit()}>
@@ -28,4 +25,8 @@ class Search extends Component {
   }
 }
 
-export default Search;
+SearchGithub.PropTypes = {
+  history: React.PropTypes.object.isRequired
+}
+
+export default SearchGithub;

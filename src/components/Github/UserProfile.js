@@ -1,6 +1,6 @@
 import React from 'react';
 
-const UserProfile = ({bio, username}) => {
+const UserProfile = ({bio}) => {
   // console.log('BIO', bio);
   return (
     <div>
@@ -18,7 +18,6 @@ const UserProfile = ({bio, username}) => {
   )
 }
   ;
-
 UserProfile.propTypes = {
   username: React.PropTypes.string.isRequired,
   bio: React.PropTypes.object.isRequired

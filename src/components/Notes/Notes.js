@@ -3,7 +3,7 @@ import NotesList from './NotesList';
 import AddNote from './AddNote';
 
 const Notes = ({notes, username, addNote}) => {
-  console.log({notes})
+  // console.log({notes});
   return (
     <div>
       <h3>notes for {username}</h3>

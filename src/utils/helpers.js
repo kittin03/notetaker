@@ -1,11 +1,11 @@
 import axios from 'axios';
 
 function getRepos(username) {
-  return axios.get('https://api.github.com/users/' + username + '/repos');
+  return axios.get(`https://api.github.com/users/${username}/repos`);
 };
 
 function getUserInfo(username) {
-  return axios.get('https://api.github.com/users/' + username);
+  return axios.get(`https://api.github.com/users/${username}`);
 };
 
 // var promiseObj = getRepos('tyler');
@@ -14,17 +14,9 @@ function getUserInfo(username) {
 //   console.log(data);
 // });
 
-var helpers = {
-  getGithubInfo(username) {
-    return axios.all([getRepos(username), getUserInfo(username)])
-    // when both promises get resolved the function below runs
-      .then(function(arr){
-        return {
-          repos: arr[0].data,
-          bio: arr[1].data
-        }
-      });
-  }
+// 'const' creates read only reference to a value
+export default function getGithubInfo(username) {
+  return axios.all([getRepos(username), getUserInfo(username)])
+  // when both promises get resolved the function below runs
+    .then((arr) => ({repos: arr[0].data, bio: arr[1].data}))
 };
-
-export default helpers;

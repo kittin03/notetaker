@@ -1,11 +1,11 @@
 import React from 'react';
-import Search from './Search';
+import SearchGithub from './SearchGithub';
 
-const Main = ({children}) => (
+const Main = ({children, history}) => (
   <div className="main-container">
     <nav className="navbar navbar-default" role="navigation">
       <div className="col-sm-7 col-sm-offset-2" style={{marginTop: 15}}>
-       <Search />
+       <SearchGithub history={history} />
       </div>
     </nav>
     <div className="container">
@@ -14,6 +14,6 @@ const Main = ({children}) => (
       {children}
     </div>
   </div>
-)
+);
 
 export default Main;
