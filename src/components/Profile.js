@@ -5,28 +5,36 @@ import UserProfile from './Github/UserProfile';
 import Notes from './Notes/Notes';
 import ReactFireMixin from 'reactfire';
 import Firebase from 'firebase';
+import helpers from '../utils/helpers';
 
 class Profile extends Component {
   // TODO: refactor mixin
   mixins: [ReactFireMixin]
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      notes: [1, 2, 3, 4],
-      bio: {
-        name: 'Tyler Durden'
-      },
-      repos: ['a', 'b', 'c']
+      notes: [],
+      bio: {},
+      repos: []
     }
   }
   componentDidMount() {
     this.ref = new Firebase('https://notetaker-2-59ab3.firebaseio.com/');
     // need to get properties for particular user
     // this.ref.child - take ref to user and go deeper
-    var childRef = this.ref.child(this.props.params.username)
+    var childRef = this.ref.child(this.props.params.username);
     // bind specific username endpoint in FB and pass property on a state
     // that we want to bind to - notes
     this.bindAsArray(childRef, 'notes');
+
+    helpers.getGithubInfo(this.props.params.username)
+      .then(function(data) {
+        this.setState({
+          bio: data.bio,
+          repos: data.repos
+        })
+        // makes this same as this outside function
+      }.bind(this))
   }
   // removes listener, so the state won't update when the component is down
   componentWillUnmount() {
